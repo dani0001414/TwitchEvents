@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+    <!-- 1. The <iframe> (and video player) will replace this <div> tag. -->
+    <div id="player"></div>
+
+    <div id="chat"></div>
+    <script>
+        // 2. This code loads the IFrame Player API code asynchronously.
+        var tag = document.createElement('script');
+
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+        // 3. This function creates an <iframe> (and YouTube player)
+        //    after the API code downloads.
+        var player;
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('player', {
+                height: '390',
+                width: '640',
+                videoId: 'YTcABtMk5Z8',
+            });
+        }
+
+        function HttpGet(url, callback) {
+
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    callback(xhttp.responseText);
+                }
+            };
+            xhttp.open("GET", url, true);
+            xhttp.send();
+
+        }
+        var fileID= "[\"1wBwFi3g4N4mWgphmgTTxSzGyptnoeieg-bl5JXlcBEk\",\"1qbgvk1pSEryklMcnOX-1O0vIGfniAFHquBHMC4Pgits\",\"1DC0uHubdQhm3b9AF7HVhIpSEyX9z-apBDrlRh8csfsk\",\"1DPyJgIsKnXzD5Whhb1LDvDw_aLuelnXV4Zghx8G8nc8\"]";
+        //var fileID = "1CXGCwf--houEM50wKT7JfDGxtdWwuquCFkVhk4GWm2M";
+        HttpGet("https://script.google.com/macros/s/AKfycbyZfzIBiOXUqwhW6Lp4--5y-8IjdFbKpHE-hxeYwqTDLsLxLicx/exec?fileID="+fileID, chatLoad);
+        var formatedChatArray = ["", "", "", "", "", "", "", "", "", ""];
+
+        function chatLoad(data) {
+            chatArray = data;
+            chatArray = JSON.parse(chatArray);
+            var countFrom = 0;
+            var toCount, i;
+            var previousCurrentTime, currentTime, length, message, fragmentLength, emoticonfrag;
+
+            setInterval(function () {
+                currentTime = player.getCurrentTime();
+                if (currentTime < previousCurrentTime) {
+                    countFrom = 0;
+                }
+                toCount = countFrom;
+
+                while (chatArray[toCount].contentOffsetSecond  < currentTime) {
+                    toCount++;
+                    //console.log('hovaszamol', toCount);
+                }
+                if ((toCount - countFrom > 9)) { countFrom = toCount - 9; }
+
+
+                for (i = countFrom; i < toCount; i++) {
+                    //console.log('hánydarab', toCount - countFrom);
+                    formatedChatArray.shift();
+                    length = Object.keys(chatArray[i].messageFragments).length;
+
+                    message = "";
+                    for (var j = 0; j < length; j++) {
+
+                        if (chatArray[i].messageFragments[j].emoticon !== undefined) {
+
+                            message += "<img src=\"https://static-cdn.jtvnw.net/emoticons/v1/" + chatArray[i].messageFragments[j].emoticon.emoticon_id + "/1.0\"></img> ";
+                        } else { message += chatArray[i].messageFragments[j].text; }
+                    }
+                    formatedChatArray.push("<p style=\"margin-left: 5px; margin-right: 5px\" align=\"left\"><font size=\"2\">" + "<b>" + chatArray[i].displayName + "</b>: " + message + "</font></p>");
+                    document.getElementById("chat").innerHTML = "Rögzített Chat:" + formatedChatArray[0] + formatedChatArray[1] + formatedChatArray[2] + formatedChatArray[3] + formatedChatArray[4] + formatedChatArray[5] + formatedChatArray[6] + formatedChatArray[7] + formatedChatArray[8] + formatedChatArray[9];
+                }
+                countFrom = i;
+                previousCurrentTime = currentTime;
+            }, 300);
+        }
+
+    </script>
+</body>
+
+</html>
