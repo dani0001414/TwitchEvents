@@ -31,8 +31,12 @@
         <div id="player"></div>
         <div id="chat" onmouseover="stopInterval()" onmouseout="intervalo()" style="overflow-y: scroll; height:720px;"></div>
     </div>
+    Offset eltoláts(second):
+    <input type="number" id="myNumber">
+    <button onclick="offsetSet()">Alkalmaz</button>
+
     <script>
-        
+
         function getQueryVariable(variable) {
             var query = window.location.search.substring(1);
             var vars = query.split("&");
@@ -46,10 +50,12 @@
         var streamer = getQueryVariable("streamer");
         var fileID = getQueryVariable("fileid");
         var ytID = getQueryVariable("ytid");
-        
+        var offset = 0;
+
+
+        /*Chat scroll automatic*/
         intervalo();
         var chatbottom;
-
         function scroll() {
             var elem = document.getElementById('chat');
             elem.scrollTop = elem.scrollHeight;
@@ -62,7 +68,7 @@
         function stopInterval() {
             clearInterval(chatbottom);
         }
-        // 2. This code loads the IFrame Player API code asynchronously.
+        // YoutubeCode
         var tag = document.createElement('script');
 
         tag.src = "https://www.youtube.com/iframe_api";
@@ -80,6 +86,7 @@
             });
         }
 
+        //LoadChat
         function HttpGet(url, callback) {
 
             var xhttp = new XMLHttpRequest();
@@ -93,25 +100,34 @@
 
         }
 
-        //var fileID = "1CXGCwf--houEM50wKT7JfDGxtdWwuquCFkVhk4GWm2M";
         HttpGet("https://script.google.com/macros/s/AKfycbyZfzIBiOXUqwhW6Lp4--5y-8IjdFbKpHE-hxeYwqTDLsLxLicx/exec?fileID=" + fileID, chatLoad);
-        var formatedChatArray = ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""];
 
+
+
+
+        var chatFlow;
         function chatLoad(data) {
             chatArray = data;
             chatArray = JSON.parse(chatArray);
+            chatDom();
+        }
+
+        function chatDom() {
+            var formatedChatArray = ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""];
             var countFrom = 0;
             var toCount, i;
             var previousCurrentTime, currentTime, length, message, fragmentLength, emoticonfrag;
+            var offsetCur = offset;
 
-            setInterval(function () {
-                currentTime = player.getCurrentTime() + 0;
+            chatFlow = setInterval(function () {
+                currentTime = player.getCurrentTime();
+
                 if (currentTime < previousCurrentTime) {
                     countFrom = 0;
                 }
                 toCount = countFrom;
 
-                while (chatArray[toCount].contentOffsetSecond < currentTime) {
+                while ((chatArray[toCount].contentOffsetSecond - offsetCur) < currentTime) {
                     toCount++;
                     //console.log('hovaszamol', toCount);
                 }
@@ -138,12 +154,19 @@
                 countFrom = i;
                 previousCurrentTime = currentTime;
             }, 300);
-
-
-
-
         }
 
+
+        document.getElementById("myNumber").value = offset;
+        function offsetSet() {
+            formatedChatArray = ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""];
+            var x = document.getElementById("myNumber").value;
+            offset = x;
+            //formatedChatArray = emptyChatArray;
+            document.getElementById("chat").innerHTML = "";
+            clearInterval(chatFlow);
+            chatDom();
+        }
     </script>
 </body>
 
