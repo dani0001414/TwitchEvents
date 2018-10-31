@@ -1,12 +1,52 @@
 <!DOCTYPE html>
 <html>
 
+<head>
+    <style>
+        #wrapper {
+            width: 100%;
+
+            overflow: hidden;
+            /* will contain if #first is longer than #second */
+        }
+
+        #player {
+            width: 70%;
+            float: left;
+            /* add this */
+            border: 1px solid gray;
+        }
+
+        #chat {
+            border: 1px solid gray;
+            overflow: hidden;
+            /* if you don't want #second to wrap below #first */
+        }
+    </style>
+</head>
+
 <body>
     <!-- 1. The <iframe> (and video player) will replace this <div> tag. -->
-    <div id="player"></div>
-
-    <div id="chat"></div>
+    <div id="wrapper">
+        <div id="player"></div>
+        <div id="chat" onmouseover="stopInterval()" onmouseout="intervalo()" style="overflow-y: scroll; height:720px;"></div>
+    </div>
     <script>
+        intervalo();
+        var chatbottom;
+
+        function scroll() {
+                    var elem = document.getElementById('chat');
+                    elem.scrollTop = elem.scrollHeight;
+                }
+                
+        function intervalo(){   
+                 chatbottom = setInterval(scroll, 300);
+        }
+
+        function stopInterval() {
+            clearInterval(chatbottom);
+        }
         // 2. This code loads the IFrame Player API code asynchronously.
         var tag = document.createElement('script');
 
@@ -19,9 +59,9 @@
         var player;
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('player', {
-                height: '390',
-                width: '640',
-                videoId: 'YTcABtMk5Z8',
+                height: '720',
+                width: '1280',
+                videoId: 'BsfaGOoQoUU',
             });
         }
 
@@ -37,10 +77,10 @@
             xhttp.send();
 
         }
-        var fileID= "[\"1wBwFi3g4N4mWgphmgTTxSzGyptnoeieg-bl5JXlcBEk\",\"1qbgvk1pSEryklMcnOX-1O0vIGfniAFHquBHMC4Pgits\",\"1DC0uHubdQhm3b9AF7HVhIpSEyX9z-apBDrlRh8csfsk\",\"1DPyJgIsKnXzD5Whhb1LDvDw_aLuelnXV4Zghx8G8nc8\"]";
+        var fileID = "1Zk0uQK3PjAo0DyzMPAiX5bvJRvAHvXuhluyjMdth_94";
         //var fileID = "1CXGCwf--houEM50wKT7JfDGxtdWwuquCFkVhk4GWm2M";
-        HttpGet("https://script.google.com/macros/s/AKfycbyZfzIBiOXUqwhW6Lp4--5y-8IjdFbKpHE-hxeYwqTDLsLxLicx/exec?fileID="+fileID, chatLoad);
-        var formatedChatArray = ["", "", "", "", "", "", "", "", "", ""];
+        HttpGet("https://script.google.com/macros/s/AKfycbyZfzIBiOXUqwhW6Lp4--5y-8IjdFbKpHE-hxeYwqTDLsLxLicx/exec?fileID=" + fileID, chatLoad);
+        var formatedChatArray = ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""];
 
         function chatLoad(data) {
             chatArray = data;
@@ -50,17 +90,17 @@
             var previousCurrentTime, currentTime, length, message, fragmentLength, emoticonfrag;
 
             setInterval(function () {
-                currentTime = player.getCurrentTime();
+                currentTime = player.getCurrentTime() + 0;
                 if (currentTime < previousCurrentTime) {
                     countFrom = 0;
                 }
                 toCount = countFrom;
 
-                while (chatArray[toCount].contentOffsetSecond  < currentTime) {
+                while (chatArray[toCount].contentOffsetSecond < currentTime) {
                     toCount++;
                     //console.log('hovaszamol', toCount);
                 }
-                if ((toCount - countFrom > 9)) { countFrom = toCount - 9; }
+                if ((toCount - countFrom > 19)) { countFrom = toCount - 19; }
 
 
                 for (i = countFrom; i < toCount; i++) {
@@ -77,11 +117,16 @@
                         } else { message += chatArray[i].messageFragments[j].text; }
                     }
                     formatedChatArray.push("<p style=\"margin-left: 5px; margin-right: 5px\" align=\"left\"><font size=\"2\">" + "<b>" + chatArray[i].displayName + "</b>: " + message + "</font></p>");
-                    document.getElementById("chat").innerHTML = "Rögzített Chat:" + formatedChatArray[0] + formatedChatArray[1] + formatedChatArray[2] + formatedChatArray[3] + formatedChatArray[4] + formatedChatArray[5] + formatedChatArray[6] + formatedChatArray[7] + formatedChatArray[8] + formatedChatArray[9];
+                    document.getElementById("chat").innerHTML = "Rögzített Chat:" + formatedChatArray[0] + formatedChatArray[1] + formatedChatArray[2] + formatedChatArray[3] + formatedChatArray[4] + formatedChatArray[5] + formatedChatArray[6] + formatedChatArray[7] + formatedChatArray[8] + formatedChatArray[9] +
+                        formatedChatArray[10] + formatedChatArray[11] + formatedChatArray[12] + formatedChatArray[13] + formatedChatArray[14] + formatedChatArray[15] + formatedChatArray[16] + formatedChatArray[17] + formatedChatArray[18] + formatedChatArray[19];
                 }
                 countFrom = i;
                 previousCurrentTime = currentTime;
             }, 300);
+
+
+
+
         }
 
     </script>
