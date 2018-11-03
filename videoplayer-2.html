@@ -14,18 +14,18 @@
             width: 70%;
             float: left;
             /* add this */
-            border: 1px solid gray;
+            border: 1px solid black;
         }
 
         #chat {
-            border: 1px solid gray;
+            border: 1px solid black;
             overflow: hidden;
             /* if you don't want #second to wrap below #first */
         }
     </style>
 </head>
 
-<body>
+<body link="grey" vlink="grey" style="font-family:'Roboto', sans-serif; background: #0e0c13; height:100%; color: #c3c1c8">
     <!-- 1. The <iframe> (and video player) will replace this <div> tag. -->
     <div id="wrapper">
         <div id="player"></div>
@@ -40,7 +40,7 @@
         var ytID = getQueryVariable("ytid");
         var seek = getQueryVariable("seek");
         var offset = getQueryVariable("os");
-        var chatFlow, chatbottom, chatArray, channelBadges;
+        var chatFlow, chatbottom, chatArray, channelBadges, globalBadges;
 
         if (offset == false) {
             var offset = 0;
@@ -68,7 +68,8 @@
         }
 
 
-        HttpGet("https://badges.twitch.tv/v1/badges/channels/63493039/display?language=hu" + fileID, channelBadgeLoad);
+        HttpGet("https://badges.twitch.tv/v1/badges/channels/63493039/display?language=hu", channelBadgeLoad);
+        HttpGet("https://badges.twitch.tv/v1/badges/global/display?language=hu", globalBadgeLoad);
         HttpGet("https://script.google.com/macros/s/AKfycbyZfzIBiOXUqwhW6Lp4--5y-8IjdFbKpHE-hxeYwqTDLsLxLicx/exec?fileID=" + fileID, chatLoad);
 
         function chatLoad(data) {
@@ -79,6 +80,10 @@
         function channelBadgeLoad(data) {
             channelBadges = data;
             channelBadges = JSON.parse(channelBadges).badge_sets;
+        }
+        function globalBadgeLoad(data) {
+            globalBadges = data;
+            globalBadges = JSON.parse(globalBadges).badge_sets;
         }
 
         function chatDom() {
@@ -91,7 +96,7 @@
 
 
             chatFlow = setInterval(function () {
-                
+
                 currentTime = player.getCurrentTime();
 
                 if (currentTime < previousCurrentTime) {
@@ -126,19 +131,55 @@
 
                     if (chatArray[i].user_badges !== undefined) {
                         length = Object.keys(chatArray[i].user_badges).length;
-                        
+
                         for (j = 0; j < length; j++) {
+                            if (chatArray[i].user_badges[j]._id == "premium") {
+                                channelBadgeVersion = parseInt(chatArray[i].user_badges[j].version, 10);
+                                badge += "<img src=\"" + globalBadges["premium"].versions[channelBadgeVersion].image_url_1x + "\"></img>";
+                            }
+
+                            if (chatArray[i].user_badges[j]._id == "turbo") {
+                                channelBadgeVersion = parseInt(chatArray[i].user_badges[j].version, 10);
+                                badge += "<img src=\"" + globalBadges["turbo"].versions[channelBadgeVersion].image_url_1x + "\"></img>";
+                            }
+
+                            if (chatArray[i].user_badges[j]._id == "global_mod") {
+                                channelBadgeVersion = parseInt(chatArray[i].user_badges[j].version, 10);
+                                badge += "<img src=\"" + globalBadges["global_mod"].versions[channelBadgeVersion].image_url_1x + "\"></img>";
+                            }
+
+                            if (chatArray[i].user_badges[j]._id == "broadcaster") {
+                                channelBadgeVersion = parseInt(chatArray[i].user_badges[j].version, 10);
+                                badge += "<img src=\"" + globalBadges["broadcaster"].versions[channelBadgeVersion].image_url_1x + "\"></img>";
+                            }
+
+                            if (chatArray[i].user_badges[j]._id == "moderator") {
+                                channelBadgeVersion = parseInt(chatArray[i].user_badges[j].version, 10);
+                                badge += "<img src=\"" + globalBadges["moderator"].versions[channelBadgeVersion].image_url_1x + "\"></img>";
+                            }
                             if (chatArray[i].user_badges[j]._id == "subscriber") {
                                 channelBadgeVersion = parseInt(chatArray[i].user_badges[j].version, 10);
                                 badge += "<img src=\"" + channelBadges["subscriber"].versions[channelBadgeVersion].image_url_1x + "\"></img>";
-                            }//badge_sets.subscriber.versions[""0""].image_url_1x
+                            }
+
+                            if (chatArray[i].user_badges[j]._id == "partner") {
+                                channelBadgeVersion = parseInt(chatArray[i].user_badges[j].version, 10);
+                                badge += "<img src=\"" + globalBadges["partner"].versions[channelBadgeVersion].image_url_1x + "\"></img>";
+                            }
+
+                            if (chatArray[i].user_badges[j]._id == "sub-gifter") {
+                                channelBadgeVersion = parseInt(chatArray[i].user_badges[j].version, 10);
+                                badge += "<img src=\"" + globalBadges["sub-gifter"].versions[channelBadgeVersion].image_url_1x + "\"></img>";
+                            }
+
                             if (chatArray[i].user_badges[j]._id == "bits") {
                                 channelBadgeVersion = parseInt(chatArray[i].user_badges[j].version, 10);
                                 badgeVersion = channelBadges["bits"].versions[channelBadgeVersion];
+
                                 if (badgeVersion !== undefined) {
                                     badge += "<img src=\"" + channelBadges["bits"].versions[channelBadgeVersion].image_url_1x + "\"></img>";
                                 } else {
-                                    //gloabal bit image
+                                    badge += "<img src=\"" + globalBadges["bits"].versions[channelBadgeVersion].image_url_1x + "\"></img>";
                                 }
 
                             }
