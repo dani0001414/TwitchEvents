@@ -91,6 +91,7 @@
 
 
             chatFlow = setInterval(function () {
+                
                 currentTime = player.getCurrentTime();
 
                 if (currentTime < previousCurrentTime) {
@@ -109,6 +110,7 @@
 
 
                 for (i = countFrom; i < toCount; i++) {
+                    badge = "";
                     //console.log('hánydarab', toCount - countFrom);
                     formatedChatArray.shift();
                     length = Object.keys(chatArray[i].messageFragments).length;
@@ -124,7 +126,7 @@
 
                     if (chatArray[i].user_badges !== undefined) {
                         length = Object.keys(chatArray[i].user_badges).length;
-                        badge = "";
+                        
                         for (j = 0; j < length; j++) {
                             if (chatArray[i].user_badges[j]._id == "subscriber") {
                                 channelBadgeVersion = parseInt(chatArray[i].user_badges[j].version, 10);
