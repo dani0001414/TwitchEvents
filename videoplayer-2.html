@@ -36,44 +36,19 @@
     <button onclick="offsetSet()">Alkalmaz</button>
 
     <script>
-
-        function getQueryVariable(variable) {
-            var query = window.location.search.substring(1);
-            var vars = query.split("&");
-            for (var i = 0; i < vars.length; i++) {
-                var pair = vars[i].split("=");
-                if (pair[0] == variable) { return pair[1]; }
-            }
-            return (false);
-        }
-
-
         var fileID = getQueryVariable("fileid");
         var ytID = getQueryVariable("ytid");
         var seek = getQueryVariable("seek");
         var offset = getQueryVariable("os");
+        var chatFlow, chatbottom, chatArray, channelBadges;
 
         if (offset == false) {
             var offset = 0;
         }
 
-
-
         /*Chat scroll automatic*/
         intervalo();
-        var chatbottom;
-        function scroll() {
-            var elem = document.getElementById('chat');
-            elem.scrollTop = elem.scrollHeight;
-        }
 
-        function intervalo() {
-            chatbottom = setInterval(scroll, 300);
-        }
-
-        function stopInterval() {
-            clearInterval(chatbottom);
-        }
         // YoutubeCode
         var tag = document.createElement('script');
 
@@ -92,30 +67,18 @@
             });
         }
 
-        //LoadChat
-        function HttpGet(url, callback) {
 
-            var xhttp = new XMLHttpRequest();
-            xhttp.onreadystatechange = function () {
-                if (this.readyState == 4 && this.status == 200) {
-                    callback(xhttp.responseText);
-                }
-            };
-            xhttp.open("GET", url, true);
-            xhttp.send();
-
-        }
-
+        HttpGet("https://badges.twitch.tv/v1/badges/channels/63493039/display?language=hu" + fileID, channelBadgeLoad);
         HttpGet("https://script.google.com/macros/s/AKfycbyZfzIBiOXUqwhW6Lp4--5y-8IjdFbKpHE-hxeYwqTDLsLxLicx/exec?fileID=" + fileID, chatLoad);
 
-
-
-
-        var chatFlow;
         function chatLoad(data) {
             chatArray = data;
             chatArray = JSON.parse(chatArray);
             chatDom();
+        }
+        function channelBadgeLoad(data) {
+            channelBadges = data;
+            channelBadges = JSON.parse(channelBadges).badge_sets;
         }
 
         function chatDom() {
@@ -124,6 +87,8 @@
             var toCount, i;
             var previousCurrentTime, currentTime, length, message, fragmentLength, emoticonfrag;
             var offsetCur = offset;
+            var badge, badgeVersion, channelBadgeVersion;
+
 
             chatFlow = setInterval(function () {
                 currentTime = player.getCurrentTime();
@@ -132,6 +97,9 @@
                     countFrom = 0;
                 }
                 toCount = countFrom;
+
+                //var ratio = 60/62.500;
+
 
                 while ((chatArray[toCount].contentOffsetSecond - offsetCur) < currentTime) {
                     toCount++;
@@ -153,7 +121,28 @@
                             message += "<img src=\"https://static-cdn.jtvnw.net/emoticons/v1/" + chatArray[i].messageFragments[j].emoticon.emoticon_id + "/1.0\"></img> ";
                         } else { message += chatArray[i].messageFragments[j].text; }
                     }
-                    formatedChatArray.push("<p style=\"margin-left: 5px; margin-right: 5px\" align=\"left\"><font size=\"2\">" + "<b>" + chatArray[i].displayName + "</b>: " + message + "</font></p>");
+
+                    if (chatArray[i].user_badges !== undefined) {
+                        length = Object.keys(chatArray[i].user_badges).length;
+                        badge = "";
+                        for (j = 0; j < length; j++) {
+                            if (chatArray[i].user_badges[j]._id == "subscriber") {
+                                channelBadgeVersion = parseInt(chatArray[i].user_badges[j].version, 10);
+                                badge += "<img src=\"" + channelBadges["subscriber"].versions[channelBadgeVersion].image_url_1x + "\"></img>";
+                            }//badge_sets.subscriber.versions[""0""].image_url_1x
+                            if (chatArray[i].user_badges[j]._id == "bits") {
+                                channelBadgeVersion = parseInt(chatArray[i].user_badges[j].version, 10);
+                                badgeVersion = channelBadges["bits"].versions[channelBadgeVersion];
+                                if (badgeVersion !== undefined) {
+                                    badge += "<img src=\"" + channelBadges["bits"].versions[channelBadgeVersion].image_url_1x + "\"></img>";
+                                } else {
+                                    //gloabal bit image
+                                }
+
+                            }
+                        }
+                    }
+                    formatedChatArray.push("<p style=\"margin-left: 5px; margin-right: 5px\" align=\"left\"><font size=\"2\">" + "<b>" + badge + chatArray[i].displayName + "</b>: " + message + "</font></p>");
                     document.getElementById("chat").innerHTML = "Rögzített Chat:" + formatedChatArray[0] + formatedChatArray[1] + formatedChatArray[2] + formatedChatArray[3] + formatedChatArray[4] + formatedChatArray[5] + formatedChatArray[6] + formatedChatArray[7] + formatedChatArray[8] + formatedChatArray[9] +
                         formatedChatArray[10] + formatedChatArray[11] + formatedChatArray[12] + formatedChatArray[13] + formatedChatArray[14] + formatedChatArray[15] + formatedChatArray[16] + formatedChatArray[17] + formatedChatArray[18] + formatedChatArray[19];
                 }
@@ -179,6 +168,40 @@
                 player.playVideo();
                 player.seekTo(seek);
             }
+        }
+
+        function HttpGet(url, callback) {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    callback(xhttp.responseText);
+                }
+            };
+            xhttp.open("GET", url, true);
+            xhttp.send();
+        }
+
+        function scroll() {
+            var elem = document.getElementById('chat');
+            elem.scrollTop = elem.scrollHeight;
+        }
+
+        function intervalo() {
+            chatbottom = setInterval(scroll, 300);
+        }
+
+        function stopInterval() {
+            clearInterval(chatbottom);
+        }
+
+        function getQueryVariable(variable) {
+            var query = window.location.search.substring(1);
+            var vars = query.split("&");
+            for (var i = 0; i < vars.length; i++) {
+                var pair = vars[i].split("=");
+                if (pair[0] == variable) { return pair[1]; }
+            }
+            return (false);
         }
     </script>
 </body>
