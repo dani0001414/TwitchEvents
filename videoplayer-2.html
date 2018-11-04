@@ -11,7 +11,7 @@
         }
 
         #player {
-            width: 70%;
+            width: 80%;
             float: left;
             /* add this */
             border: 1px solid black;
@@ -20,6 +20,7 @@
         #chat {
             border: 1px solid black;
             overflow: hidden;
+            width: 19%;
             /* if you don't want #second to wrap below #first */
         }
     </style>
@@ -61,8 +62,8 @@
         var player;
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('player', {
-                height: '720',
-                width: '1280',
+                height: '720px',
+                width: '80%',
                 videoId: ytID,
             });
         }
