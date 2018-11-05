@@ -115,7 +115,7 @@
         }
 
         function chatDom() {
-            var formatedChatArray = ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""];
+            var formatedChatArray = ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "","", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""];
             var countFrom = 0;
             var toCount, i;
             var previousCurrentTime, currentTime, length, message, fragmentLength, emoticonfrag;
@@ -139,7 +139,7 @@
                     toCount++;
                     //console.log('hovaszamol', toCount);
                 }
-                if ((toCount - countFrom > 19)) { countFrom = toCount - 19; }
+                if ((toCount - countFrom > 39)) { countFrom = toCount - 39; }
 
 
                 for (i = countFrom; i < toCount; i++) {
@@ -215,7 +215,8 @@
                     }
                     formatedChatArray.push("<p style=\"margin-left: 5px; margin-right: 5px\" align=\"left\"><font size=\"2\">" + "<b>" + badge + chatArray[i].displayName + "</b>: " + message + "</font></p>");
                     document.getElementById("chat").innerHTML = "Rögzített Chat:" + formatedChatArray[0] + formatedChatArray[1] + formatedChatArray[2] + formatedChatArray[3] + formatedChatArray[4] + formatedChatArray[5] + formatedChatArray[6] + formatedChatArray[7] + formatedChatArray[8] + formatedChatArray[9] +
-                        formatedChatArray[10] + formatedChatArray[11] + formatedChatArray[12] + formatedChatArray[13] + formatedChatArray[14] + formatedChatArray[15] + formatedChatArray[16] + formatedChatArray[17] + formatedChatArray[18] + formatedChatArray[19];
+                        formatedChatArray[10] + formatedChatArray[11] + formatedChatArray[12] + formatedChatArray[13] + formatedChatArray[14] + formatedChatArray[15] + formatedChatArray[16] + formatedChatArray[17] + formatedChatArray[18] + formatedChatArray[19] + formatedChatArray[20] + formatedChatArray[21] + formatedChatArray[22] + formatedChatArray[23] + formatedChatArray[24] + formatedChatArray[25] + formatedChatArray[26] + formatedChatArray[27] + formatedChatArray[28] + formatedChatArray[29] +
+                        formatedChatArray[30] + formatedChatArray[31] + formatedChatArray[32] + formatedChatArray[33] + formatedChatArray[34] + formatedChatArray[35] + formatedChatArray[36] + formatedChatArray[37] + formatedChatArray[38] + formatedChatArray[39];
                 }
                 countFrom = i;
                 previousCurrentTime = currentTime;
@@ -225,7 +226,7 @@
 
         document.getElementById("myNumber").value = offset;
         function offsetSet() {
-            formatedChatArray = ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""];
+            formatedChatArray = ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "","", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""];
             var x = document.getElementById("myNumber").value;
             offset = x;
             //formatedChatArray = emptyChatArray;
